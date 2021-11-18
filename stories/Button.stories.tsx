@@ -4,7 +4,7 @@ import Button from '../src/components/atoms/Button';
 import { CustomButtonProps } from '../src/types/button';
 
 export default {
-  title: 'silicon-ui/atom/button',
+  title: 'silicon-ui/Atoms/Button',
   component: Button,
   argTypes: {
     variant: {
