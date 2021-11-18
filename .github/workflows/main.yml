@@ -1,32 +1,30 @@
-name: CI
-on: [push]
+name: Build Pages
+
+on:
+  push:
+    branches:
+      - main
+
 jobs:
   build:
-    name: Build, lint, and test on Node ${{ matrix.node }} and ${{ matrix.os }}
+    runs-on: ubuntu-latest
 
-    runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        node: ['10.x', '12.x', '14.x']
-        os: [ubuntu-latest, windows-latest, macOS-latest]
+        node-version: [16.x]
 
     steps:
-      - name: Checkout repo
-        uses: actions/checkout@v2
-
-      - name: Use Node ${{ matrix.node }}
+      - uses: actions/checkout@v2
+      - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v1
         with:
-          node-version: ${{ matrix.node }}
+          node-version: ${{ matrix.node-version }}
 
-      - name: Install deps and build (with cache)
-        uses: bahmutov/npm-install@v1
+      - run: yarn --ignore-scripts && yarn build-storybook -s public
 
-      - name: Lint
-        run: yarn lint
-
-      - name: Test
-        run: yarn test --ci --coverage --maxWorkers=2
-
-      - name: Build
-        run: yarn build
+      - name: Deploy 🚀
+        uses: JamesIves/github-pages-deploy-action@4.1.4
+        with:
+          branch: gh-pages
+          folder: storybook-static
+          ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
